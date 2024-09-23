@@ -8,9 +8,10 @@
     body { font-family: Arial, sans-serif; margin: 20px; }
     form { margin-bottom: 30px; }
     input { margin-right: 10px; }
-    table { width: 100%; border-collapse: collapse; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     tr.highlight { background-color: #ffff99; } /* Highlight winner */
+    .winner::before { content: '⭐ '; } /* Display star before winner's name */
   </style>
 </head>
 <body>
@@ -22,8 +23,8 @@
     <button type="submit">Submit</button>
   </form>
 
-  <h2>Yesterday's Leaderboard</h2>
-  <table id="leaderboard">
+  <h2>Today's Leaderboard</h2>
+  <table id="todayLeaderboard">
     <thead>
       <tr>
         <th>Name</th>
@@ -31,7 +32,20 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Leaderboard entries will be injected here -->
+      <!-- Today's leaderboard entries will be injected here -->
+    </tbody>
+  </table>
+
+  <h2>Yesterday's Leaderboard</h2>
+  <table id="yesterdayLeaderboard">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Number of Pockets</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Yesterday's leaderboard entries will be injected here -->
     </tbody>
   </table>
 

@@ -4,13 +4,7 @@ import { getFirestore, collection, addDoc, query, where, getDocs } from 'https:/
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDQ5SEDfrvmAaGBjZTtHQ2L89jprhJ5QHk",
-  authDomain: "pocketwang-a2d56.firebaseapp.com",
-  projectId: "pocketwang-a2d56",
-  storageBucket: "pocketwang-a2d56.appspot.com",
-  messagingSenderId: "321549602257",
-  appId: "1:321549602257:web:36c42c88de80a58eb4a4f0",
-  measurementId: "G-R6J2X0JHJW"
+  // Your Firebase configuration details
 };
 
 // Initialize Firebase
@@ -35,6 +29,7 @@ async function submitEntry(e) {
       });
       alert('Entry submitted successfully!');
       document.getElementById('entryForm').reset();
+      loadLeaderboard(); // Reload leaderboards after submission
     } catch (error) {
       console.error('Error adding document: ', error);
     }
@@ -46,10 +41,12 @@ async function submitEntry(e) {
 window.onload = loadLeaderboard;
 
 async function loadLeaderboard() {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const dateStr = yesterday.toISOString().split('T')[0];
+  loadLeaderboardForDate('todayLeaderboard', new Date());
+  loadLeaderboardForDate('yesterdayLeaderboard', new Date(Date.now() - 86400000)); // 86400000ms = 1 day
+}
 
+async function loadLeaderboardForDate(tableId, dateObj) {
+  const dateStr = dateObj.toISOString().split('T')[0];
   const q = query(collection(db, 'entries'), where('date', '==', dateStr));
 
   try {
@@ -58,32 +55,38 @@ async function loadLeaderboard() {
     querySnapshot.forEach((doc) => {
       entries.push(doc.data());
     });
-    displayLeaderboard(entries);
+    displayLeaderboard(entries, tableId);
   } catch (error) {
     console.error('Error getting documents: ', error);
   }
 }
 
-function displayLeaderboard(entries) {
-  const tbody = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
-  tbody.innerHTML = '';
+function displayLeaderboard(entries, tableId) {
+  const tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+  tbody.innerHTML = ''; // Clear existing entries
 
   if (entries.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="2">No entries for yesterday.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="2">No entries.</td></tr>';
     return;
   }
 
+  // Calculate the smallest unique number of pockets
   const pocketCounts = entries.map(entry => entry.pockets);
   const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
   const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
 
   entries.forEach((entry) => {
     const row = tbody.insertRow();
-    row.insertCell(0).innerText = entry.name;
-    row.insertCell(1).innerText = entry.pockets;
+    const nameCell = row.insertCell(0);
+    const pocketsCell = row.insertCell(1);
 
+    nameCell.innerText = entry.name;
+    pocketsCell.innerText = entry.pockets;
+
+    // Highlight the winner
     if (entry.pockets === minUniquePockets) {
       row.classList.add('highlight');
+      nameCell.classList.add('winner'); // Add class to display star
     }
   });
 }
