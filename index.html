@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket Game</title>
+  <style>
+    /* Basic styling */
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { margin-bottom: 30px; }
+    input { margin-right: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    tr.highlight { background-color: #ffff99; } /* Highlight winner */
+  </style>
+</head>
+<body>
+
+  <h1>Enter Today's Pockets</h1>
+  <form id="entryForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="number" id="pockets" placeholder="Number of Pockets" required min="0" />
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Yesterday's Leaderboard</h2>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Number of Pockets</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Leaderboard entries will be injected here -->
+    </tbody>
+  </table>
+
+  <!-- Include your JavaScript code as a module -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
