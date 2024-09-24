@@ -2,21 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pocketwhack</title>
+  <title>POCKETWHACK</title>
+  <!-- Include Google Font VT323 -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
     /* Basic styling */
-    body { font-family: Arial, sans-serif; margin: 20px; }
+    body {
+      font-family: 'VT323', monospace;
+      background-color: black;
+      color: green;
+      margin: 20px;
+    }
+    h1.title {
+      font-size: 72px;
+      text-align: center;
+    }
+    h1.title span {
+      color: red; /* Default color */
+    }
+    /* Assign different colors to each letter */
+    h1.title span:nth-child(1) { color: red; }    /* P */
+    h1.title span:nth-child(2) { color: blue; }   /* O */
+    h1.title span:nth-child(3) { color: yellow; } /* C */
+    h1.title span:nth-child(4) { color: green; }  /* K */
+    h1.title span:nth-child(5) { color: orange; } /* E */
+    h1.title span:nth-child(6) { color: purple; } /* T */
+    h1.title span:nth-child(7) { color: cyan; }   /* W */
+    h1.title span:nth-child(8) { color: magenta;} /* H */
+    h1.title span:nth-child(9) { color: lime; }   /* A */
+    h1.title span:nth-child(10){ color: pink; }   /* C */
+    h1.title span:nth-child(11){ color: gold; }   /* K */
+    
     form { margin-bottom: 30px; }
     input { margin-right: 10px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    tr.highlight { background-color: #ffff99; } /* Highlight winner */
+    th, td {
+      border: 1px solid green;
+      padding: 8px;
+      text-align: left;
+    }
+    tr.highlight { background-color: darkgreen; } /* Highlight winner */
     .winner::before { content: '⭐ '; } /* Display star before winner's name */
+    /* Set input and button styles */
+    input, button {
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+    }
+    input::placeholder {
+      color: green;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Enter Today's Pocketz v2</h1>
+  <!-- Large Title with letters in different primary colors -->
+  <h1 class="title">
+    <span>P</span><span>O</span><span>C</span><span>K</span><span>E</span><span>T</span><span>W</span><span>H</span><span>A</span><span>C</span><span>K</span>
+  </h1>
+
+  <h1>Enter Today's Pockets</h1>
   <form id="entryForm">
     <input type="text" id="name" placeholder="Your Name" required />
     <input type="number" id="pockets" placeholder="Number of Pockets" required min="0" />
@@ -51,5 +98,12 @@
 
   <!-- Include your JavaScript code as a module -->
   <script type="module" src="app.js"></script>
+
+  <!-- Autoplay MP3 when page loads -->
+  <audio id="background-audio" autoplay>
+    <source src="your-audio-file.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
 </body>
 </html>

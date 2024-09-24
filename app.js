@@ -109,6 +109,9 @@ function displayLeaderboard(entries, tableId) {
   const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
   const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
 
+  // Sort entries in descending order of number of pockets
+  entries.sort((a, b) => b.pockets - a.pockets);
+
   entries.forEach((entry) => {
     const row = tbody.insertRow();
     const nameCell = row.insertCell(0);
