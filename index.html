@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>POCKETWHACK</title>
+  <!-- Responsive Meta Tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Include Google Font VT323 -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
@@ -14,8 +16,9 @@
       margin: 20px;
     }
     h1.title {
-      font-size: 72px;
+      font-size: 10vw; /* Responsive font size */
       text-align: center;
+      margin-bottom: 20px;
     }
     h1.title span {
       color: red; /* Default color */
@@ -32,27 +35,51 @@
     h1.title span:nth-child(9) { color: lime; }   /* A */
     h1.title span:nth-child(10){ color: pink; }   /* C */
     h1.title span:nth-child(11){ color: gold; }   /* K */
-    
-    form { margin-bottom: 30px; }
-    input { margin-right: 10px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-    th, td {
-      border: 1px solid green;
-      padding: 8px;
-      text-align: left;
-    }
-    tr.highlight { background-color: darkgreen; } /* Highlight winner */
-    .winner::before { content: '⭐ '; } /* Display star before winner's name */
-    /* Set input and button styles */
+
+    form { margin-bottom: 30px; text-align: center; }
     input, button {
       background-color: black;
       color: green;
       border: 1px solid green;
       font-family: 'VT323', monospace;
-      font-size: 20px;
+      font-size: 5vw; /* Responsive font size */
+      padding: 5px;
+      margin: 5px;
+      width: 80%;
+      max-width: 300px;
     }
     input::placeholder {
       color: green;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid green;
+      padding: 8px;
+      text-align: left;
+      font-size: 4vw; /* Responsive font size */
+    }
+    tr.highlight { background-color: #004400; } /* Darker green for winner */
+    tr.highlight td {
+      color: white; /* Make text color white for better contrast */
+    }
+    .winner::before { content: '⭐ '; } /* Display star before winner's name */
+    /* Responsive adjustments */
+    @media (min-width: 600px) {
+      input, button {
+        font-size: 20px;
+        width: auto;
+        max-width: none;
+      }
+      th, td {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -67,6 +94,7 @@
   <form id="entryForm">
     <input type="text" id="name" placeholder="Your Name" required />
     <input type="number" id="pockets" placeholder="Number of Pockets" required min="0" />
+    <br />
     <button type="submit">Submit</button>
   </form>
 
@@ -104,6 +132,27 @@
     <source src="https://jackodriley.github.io/pocketwang/pocketwhack.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
   </audio>
+
+  <!-- Script to attempt autoplay on mobile devices -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audio = document.getElementById('background-audio');
+      const playAudio = () => {
+        audio.play().catch(() => {
+          // Autoplay failed, show a play button
+          let playButton = document.createElement('button');
+          playButton.innerText = 'Play Audio';
+          playButton.style = 'position: fixed; top: 10px; right: 10px; font-size: 16px;';
+          playButton.onclick = () => {
+            audio.play();
+            playButton.remove();
+          };
+          document.body.appendChild(playButton);
+        });
+      };
+      playAudio();
+    });
+  </script>
 
 </body>
 </html>
