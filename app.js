@@ -59,7 +59,9 @@ async function submitEntry(e) {
       const querySnapshot = await getDocs(q);
       const entries = [];
       querySnapshot.forEach((doc) => {
-        entries.push(doc.data());
+        const data = doc.data();
+        data.pockets = Number(data.pockets); // Ensure pockets is a number
+        entries.push(data);
       });
 
       // Calculate the smallest unique number of pockets over 0
@@ -109,7 +111,9 @@ async function loadLeaderboardForDate(tableId, dateObj) {
 
     const entries = [];
     querySnapshot.forEach((doc) => {
-      entries.push(doc.data());
+      const data = doc.data();
+      data.pockets = Number(data.pockets); // Ensure pockets is a number
+      entries.push(data);
     });
     displayLeaderboard(entries, tableId);
   } catch (error) {
@@ -134,15 +138,15 @@ function displayLeaderboard(entries, tableId) {
     return;
   }
 
+  // Sort entries in ascending order of number of pockets
+  entries.sort((a, b) => a.pockets - b.pockets);
+
   // Calculate the smallest unique number of pockets over 0
   const pocketCounts = entries
     .filter(entry => entry.pockets > 0)
     .map(entry => entry.pockets);
   const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
   const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
-
-  // Sort entries in ascending order of number of pockets
-  entries.sort((a, b) => a.pockets - b.pockets);
 
   entries.forEach((entry) => {
     const row = tbody.insertRow();
