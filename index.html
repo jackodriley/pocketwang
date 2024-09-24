@@ -81,6 +81,18 @@
         font-size: 16px;
       }
     }
+    /* Style for the congratulatory message */
+    #message {
+      text-align: center;
+      font-size: 5vw;
+      color: green;
+      margin-top: 20px;
+    }
+    @media (min-width: 600px) {
+      #message {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -97,6 +109,9 @@
     <br />
     <button type="submit">Submit</button>
   </form>
+
+  <!-- New div to display the congratulatory message -->
+  <div id="message"></div>
 
   <h2>Today's Leaderboard</h2>
   <table id="todayLeaderboard">

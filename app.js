@@ -52,6 +52,33 @@ async function submitEntry(e) {
       alert('Entry submitted successfully!');
       document.getElementById('entryForm').reset();
       loadLeaderboard(); // Reload leaderboards after submission
+
+      // Now, check if the user's entry is the winning entry
+      // Fetch today's entries
+      const q = query(collection(db, 'entries'), where('date', '==', today));
+      const querySnapshot = await getDocs(q);
+      const entries = [];
+      querySnapshot.forEach((doc) => {
+        entries.push(doc.data());
+      });
+
+      // Calculate the smallest unique number of pockets
+      const pocketCounts = entries.map(entry => entry.pockets);
+      const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
+      const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
+
+      // Access the message div
+      const messageDiv = document.getElementById('message');
+
+      // Check if user's entry is the winning entry
+      if (pockets === minUniquePockets) {
+        // Display the message
+        messageDiv.innerText = "CONGRATULATIONS, YOU'VE POCKETWHACKED!!!";
+      } else {
+        // Clear the message if not the winning entry
+        messageDiv.innerText = "";
+      }
+
     } catch (error) {
       console.error('Error adding document: ', error);
     }
