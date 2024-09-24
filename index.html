@@ -93,6 +93,34 @@
         font-size: 24px;
       }
     }
+    /* Style for the Play Audio button */
+    #play-audio-button {
+      display: block;
+      margin: 10px auto;
+      font-size: 5vw;
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      padding: 5px 10px;
+    }
+    @media (min-width: 600px) {
+      #play-audio-button {
+        font-size: 20px;
+      }
+    }
+    /* Footer styling */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 4vw;
+      color: green;
+    }
+    @media (min-width: 600px) {
+      footer {
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -102,6 +130,8 @@
     <span>P</span><span>O</span><span>C</span><span>K</span><span>E</span><span>T</span><span>W</span><span>H</span><span>A</span><span>C</span><span>K</span>
   </h1>
 
+  <!-- The Play Audio button will be inserted here when needed -->
+
   <h1>Enter Today's Pockets</h1>
   <form id="entryForm">
     <input type="text" id="name" placeholder="Your Name" required />
@@ -110,7 +140,7 @@
     <button type="submit">Submit</button>
   </form>
 
-  <!-- New div to display the congratulatory message -->
+  <!-- Div to display the congratulatory message -->
   <div id="message"></div>
 
   <h2>Today's Leaderboard</h2>
@@ -154,20 +184,27 @@
       const audio = document.getElementById('background-audio');
       const playAudio = () => {
         audio.play().catch(() => {
-          // Autoplay failed, show a play button
+          // Autoplay failed, show a play button under the title
           let playButton = document.createElement('button');
+          playButton.id = 'play-audio-button';
           playButton.innerText = 'Play Audio';
-          playButton.style = 'position: fixed; top: 10px; right: 10px; font-size: 16px;';
           playButton.onclick = () => {
             audio.play();
             playButton.remove();
           };
-          document.body.appendChild(playButton);
+          // Insert the button after the title
+          const title = document.querySelector('h1.title');
+          title.parentNode.insertBefore(playButton, title.nextSibling);
         });
       };
       playAudio();
     });
   </script>
+
+  <!-- Footer -->
+  <footer>
+    &copy; POTATOCORP 2024
+  </footer>
 
 </body>
 </html>
