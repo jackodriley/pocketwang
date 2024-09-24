@@ -8,9 +8,130 @@
   <!-- Include Google Font VT323 -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
-    /* Existing styles remain unchanged */
-    /* ... (previous CSS code) ... */
-    /* For brevity, the existing styles are omitted */
+    /* Basic styling */
+    body {
+      font-family: 'VT323', monospace;
+      background-color: black;
+      color: green;
+      margin: 20px;
+    }
+    h1.title {
+      font-size: 10vw; /* Responsive font size */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1.title span {
+      color: red; /* Default color */
+    }
+    /* Assign different colors to each letter */
+    h1.title span:nth-child(1) { color: red; }    /* P */
+    h1.title span:nth-child(2) { color: blue; }   /* O */
+    h1.title span:nth-child(3) { color: yellow; } /* C */
+    h1.title span:nth-child(4) { color: green; }  /* K */
+    h1.title span:nth-child(5) { color: orange; } /* E */
+    h1.title span:nth-child(6) { color: purple; } /* T */
+    h1.title span:nth-child(7) { color: cyan; }   /* W */
+    h1.title span:nth-child(8) { color: magenta;} /* H */
+    h1.title span:nth-child(9) { color: lime; }   /* A */
+    h1.title span:nth-child(10){ color: pink; }   /* C */
+    h1.title span:nth-child(11){ color: gold; }   /* K */
+
+    form { margin-bottom: 30px; text-align: center; }
+    input, button {
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      font-size: 5vw; /* Responsive font size */
+      padding: 5px;
+      margin: 5px;
+      width: 80%;
+      max-width: 300px;
+    }
+    input::placeholder {
+      color: green;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid green;
+      padding: 8px;
+      text-align: left;
+      font-size: 4vw; /* Responsive font size */
+    }
+    tr.highlight { background-color: #004400; } /* Darker green for winner */
+    tr.highlight td {
+      color: white; /* Make text color white for better contrast */
+    }
+    .winner::before { content: '⭐ '; } /* Display star before winner's name */
+    /* Responsive adjustments */
+    @media (min-width: 600px) {
+      input, button {
+        font-size: 20px;
+        width: auto;
+        max-width: none;
+      }
+      th, td {
+        font-size: 16px;
+      }
+    }
+    /* Style for the congratulatory message */
+    #message {
+      text-align: center;
+      font-size: 5vw;
+      color: green;
+      margin-top: 20px;
+    }
+    @media (min-width: 600px) {
+      #message {
+        font-size: 24px;
+      }
+    }
+    /* Style for the Play Audio button */
+    #play-audio-button {
+      display: block;
+      margin: 10px auto;
+      font-size: 5vw;
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      padding: 5px 10px;
+    }
+    @media (min-width: 600px) {
+      #play-audio-button {
+        font-size: 20px;
+      }
+    }
+    /* Footer styling */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 4vw;
+      color: green;
+    }
+    @media (min-width: 600px) {
+      footer {
+        font-size: 16px;
+      }
+    }
+    /* Style for the subheading under Today's Leaderboard */
+    .subheading {
+      text-align: center;
+      font-size: 3vw;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 600px) {
+      .subheading {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
