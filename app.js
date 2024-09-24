@@ -1,24 +1,44 @@
 // Import Firebase functions
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-import { getFirestore, collection, addDoc, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  setLogLevel
+} from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
 // Your Firebase configuration
 const firebaseConfig = {
-  // Your Firebase configuration details
+  apiKey: "AIzaSyDQ5SEDfrvmAaGBjZTtHQ2L89jprhJ5QHk",
+  authDomain: "pocketwang-a2d56.firebaseapp.com",
+  projectId: "pocketwang-a2d56",
+  storageBucket: "pocketwang-a2d56.appspot.com",
+  messagingSenderId: "321549602257",
+  appId: "1:321549602257:web:36c42c88de80a58eb4a4f0",
+  measurementId: "G-R6J2X0JHJW"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Enable Firestore debug logging (for troubleshooting)
+setLogLevel('debug');
+
 document.getElementById('entryForm').addEventListener('submit', submitEntry);
 
 async function submitEntry(e) {
   e.preventDefault();
+  console.log('submitEntry called');
 
   const name = document.getElementById('name').value.trim();
   const pockets = parseInt(document.getElementById('pockets').value);
   const today = new Date().toISOString().split('T')[0];
+
+  console.log(`Name: ${name}, Pockets: ${pockets}, Date: ${today}`);
 
   if (name && !isNaN(pockets)) {
     try {
@@ -27,6 +47,7 @@ async function submitEntry(e) {
         pockets: pockets,
         date: today
       });
+      console.log('Entry added to Firestore');
       alert('Entry submitted successfully!');
       document.getElementById('entryForm').reset();
       loadLeaderboard(); // Reload leaderboards after submission
@@ -41,16 +62,21 @@ async function submitEntry(e) {
 window.onload = loadLeaderboard;
 
 async function loadLeaderboard() {
-  loadLeaderboardForDate('todayLeaderboard', new Date());
-  loadLeaderboardForDate('yesterdayLeaderboard', new Date(Date.now() - 86400000)); // 86400000ms = 1 day
+  console.log('loadLeaderboard called');
+  await loadLeaderboardForDate('todayLeaderboard', new Date());
+  await loadLeaderboardForDate('yesterdayLeaderboard', new Date(Date.now() - 86400000)); // 1 day in milliseconds
 }
 
 async function loadLeaderboardForDate(tableId, dateObj) {
   const dateStr = dateObj.toISOString().split('T')[0];
+  console.log(`Loading leaderboard for date: ${dateStr}`);
+
   const q = query(collection(db, 'entries'), where('date', '==', dateStr));
 
   try {
     const querySnapshot = await getDocs(q);
+    console.log(`Retrieved ${querySnapshot.size} entries for ${dateStr}`);
+
     const entries = [];
     querySnapshot.forEach((doc) => {
       entries.push(doc.data());
@@ -62,7 +88,15 @@ async function loadLeaderboardForDate(tableId, dateObj) {
 }
 
 function displayLeaderboard(entries, tableId) {
-  const tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+  console.log(`Displaying leaderboard for ${tableId} with ${entries.length} entries`);
+
+  const tableElement = document.getElementById(tableId);
+  if (!tableElement) {
+    console.error(`No table found with ID: ${tableId}`);
+    return;
+  }
+
+  const tbody = tableElement.getElementsByTagName('tbody')[0];
   tbody.innerHTML = ''; // Clear existing entries
 
   if (entries.length === 0) {
