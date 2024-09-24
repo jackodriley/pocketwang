@@ -121,6 +121,17 @@
         font-size: 16px;
       }
     }
+    /* Style for the subheading under Today's Leaderboard */
+    .subheading {
+      text-align: center;
+      font-size: 3vw;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 600px) {
+      .subheading {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -144,6 +155,7 @@
   <div id="message"></div>
 
   <h2>Today's Leaderboard</h2>
+  <p class="subheading">Lowest unique number of pockets wins!</p>
   <table id="todayLeaderboard">
     <thead>
       <tr>
