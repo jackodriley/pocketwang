@@ -13,12 +13,12 @@ import {
 // Your Firebase configuration
 const firebaseConfig = {
   // Your Firebase configuration details
-  apiKey: "AIzaSyDQ5SEDfrvmAaGBjZTtHQ2L89jprhJ5QHk",
+  apiKey: "YOUR_API_KEY",
   authDomain: "pocketwang-a2d56.firebaseapp.com",
   projectId: "pocketwang-a2d56",
   storageBucket: "pocketwang-a2d56.appspot.com",
   messagingSenderId: "321549602257",
-  appId: "1:321549602257:web:36c42c88de80a58eb4a4f0",
+  appId: "YOUR_APP_ID",
   measurementId: "G-R6J2X0JHJW"
 };
 
@@ -62,8 +62,10 @@ async function submitEntry(e) {
         entries.push(doc.data());
       });
 
-      // Calculate the smallest unique number of pockets
-      const pocketCounts = entries.map(entry => entry.pockets);
+      // Calculate the smallest unique number of pockets over 0
+      const pocketCounts = entries
+        .filter(entry => entry.pockets > 0)
+        .map(entry => entry.pockets);
       const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
       const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
 
@@ -71,7 +73,7 @@ async function submitEntry(e) {
       const messageDiv = document.getElementById('message');
 
       // Check if user's entry is the winning entry
-      if (pockets === minUniquePockets) {
+      if (pockets === minUniquePockets && pockets > 0) {
         // Display the message
         messageDiv.innerText = "CONGRATULATIONS, YOU'VE POCKETWHACKED!!!";
       } else {
@@ -132,8 +134,10 @@ function displayLeaderboard(entries, tableId) {
     return;
   }
 
-  // Calculate the smallest unique number of pockets
-  const pocketCounts = entries.map(entry => entry.pockets);
+  // Calculate the smallest unique number of pockets over 0
+  const pocketCounts = entries
+    .filter(entry => entry.pockets > 0)
+    .map(entry => entry.pockets);
   const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
   const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
 
@@ -146,10 +150,16 @@ function displayLeaderboard(entries, tableId) {
     const pocketsCell = row.insertCell(1);
 
     nameCell.innerText = entry.name;
-    pocketsCell.innerText = entry.pockets;
 
-    // Highlight the winner
-    if (entry.pockets === minUniquePockets) {
+    // Annotate zero pockets with "(DNP)"
+    if (entry.pockets === 0) {
+      pocketsCell.innerText = '0 (DNP)';
+    } else {
+      pocketsCell.innerText = entry.pockets;
+    }
+
+    // Highlight the winner (only if pockets > 0)
+    if (entry.pockets === minUniquePockets && entry.pockets > 0) {
       row.classList.add('highlight');
       nameCell.classList.add('winner'); // Add class to display star
     }
