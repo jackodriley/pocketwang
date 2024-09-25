@@ -31,6 +31,9 @@ setLogLevel('debug');
 
 document.getElementById('entryForm').addEventListener('submit', submitEntry);
 
+// Add event listener for the Reveal Leaderboard button
+document.getElementById('revealLeaderboardButton').addEventListener('click', showTodayLeaderboard);
+
 async function submitEntry(e) {
   e.preventDefault();
   console.log('submitEntry called');
@@ -52,6 +55,9 @@ async function submitEntry(e) {
       alert('Entry submitted successfully!');
       document.getElementById('entryForm').reset();
       loadLeaderboard(); // Reload leaderboards after submission
+
+      // Show Today's Leaderboard after submission
+      showTodayLeaderboard();
 
       // Now, check if the user's entry is the winning entry
       // Fetch today's entries
@@ -95,8 +101,11 @@ window.onload = loadLeaderboard;
 
 async function loadLeaderboard() {
   console.log('loadLeaderboard called');
-  await loadLeaderboardForDate('todayLeaderboard', new Date());
+  // Load Yesterday's Leaderboard
   await loadLeaderboardForDate('yesterdayLeaderboard', new Date(Date.now() - 86400000)); // 1 day in milliseconds
+
+  // Load Today's Leaderboard (data will be loaded but table remains hidden until revealed)
+  await loadLeaderboardForDate('todayLeaderboard', new Date());
 }
 
 async function loadLeaderboardForDate(tableId, dateObj) {
@@ -168,4 +177,13 @@ function displayLeaderboard(entries, tableId) {
       nameCell.classList.add('winner'); // Add class to display star
     }
   });
+}
+
+// Function to show Today's Leaderboard
+function showTodayLeaderboard() {
+  const todayLeaderboardSection = document.getElementById('todayLeaderboardSection');
+  const revealButton = document.getElementById('revealLeaderboardButton');
+
+  todayLeaderboardSection.style.display = 'block';
+  revealButton.style.display = 'none';
 }

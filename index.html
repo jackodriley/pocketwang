@@ -132,6 +132,27 @@
         font-size: 14px;
       }
     }
+    /* Hide the Today's Leaderboard by default */
+    #todayLeaderboardSection {
+      display: none;
+    }
+    /* Style for the Reveal Leaderboard button */
+    #revealLeaderboardButton {
+      display: block;
+      margin: 20px auto;
+      font-size: 5vw;
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      padding: 5px 10px;
+      text-align: center;
+    }
+    @media (min-width: 600px) {
+      #revealLeaderboardButton {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -154,19 +175,25 @@
   <!-- Div to display the congratulatory message -->
   <div id="message"></div>
 
-  <h2>Today's Leaderboard</h2>
-  <p class="subheading">Lowest unique number of pockets over 0 wins!</p>
-  <table id="todayLeaderboard">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Number of Pockets</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Today's leaderboard entries will be injected here -->
-    </tbody>
-  </table>
+  <!-- Reveal Today's Leaderboard Button -->
+  <button id="revealLeaderboardButton">Reveal Today's Leaderboard</button>
+
+  <!-- Today's Leaderboard Section (initially hidden) -->
+  <div id="todayLeaderboardSection">
+    <h2>Today's Leaderboard</h2>
+    <p class="subheading">Lowest unique number of pockets over 0 wins!</p>
+    <table id="todayLeaderboard">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Number of Pockets</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Today's leaderboard entries will be injected here -->
+      </tbody>
+    </table>
+  </div>
 
   <h2>Yesterday's Leaderboard</h2>
   <table id="yesterdayLeaderboard">
