@@ -29,10 +29,15 @@ const db = getFirestore(app);
 // Enable Firestore debug logging (for troubleshooting)
 setLogLevel('debug');
 
-document.getElementById('entryForm').addEventListener('submit', submitEntry);
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('entryForm').addEventListener('submit', submitEntry);
 
-// Add event listener for the Reveal Leaderboard button
-document.getElementById('revealLeaderboardButton').addEventListener('click', showTodayLeaderboard);
+  // Add event listener for the Reveal Leaderboard button
+  document.getElementById('revealLeaderboardButton').addEventListener('click', showTodayLeaderboard);
+
+  // Load leaderboards
+  loadLeaderboard();
+});
 
 async function submitEntry(e) {
   e.preventDefault();
@@ -96,8 +101,6 @@ async function submitEntry(e) {
     alert('Please enter a valid name and number of pockets.');
   }
 }
-
-window.onload = loadLeaderboard;
 
 async function loadLeaderboard() {
   console.log('loadLeaderboard called');
