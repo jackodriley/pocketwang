@@ -174,7 +174,7 @@ function displayLeaderboard(entries, tableId) {
   });
 }
 
-// New function to load daily winners
+// Updated function to load daily winners excluding the current day
 async function loadDailyWinners() {
   console.log('Loading daily winners');
 
@@ -192,15 +192,20 @@ async function loadDailyWinners() {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const date = data.date;
+      data.pockets = Number(data.pockets); // Ensure pockets is a number
       if (!entriesByDate[date]) {
         entriesByDate[date] = [];
       }
-      data.pockets = Number(data.pockets); // Ensure pockets is a number
       entriesByDate[date].push(data);
     });
 
-    // Get all dates and sort them in descending order
-    const dates = Object.keys(entriesByDate).sort((a, b) => new Date(b) - new Date(a));
+    // Get today's date string
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Get all dates and sort them in descending order, excluding today
+    const dates = Object.keys(entriesByDate)
+      .filter(date => date !== todayStr) // Exclude today's date
+      .sort((a, b) => new Date(b) - new Date(a));
 
     // Determine winner for each date
     dates.forEach((date) => {
