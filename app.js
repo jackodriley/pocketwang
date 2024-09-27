@@ -39,17 +39,27 @@ async function submitEntry(e) {
   console.log('submitEntry called');
 
   const name = document.getElementById('name').value.trim();
-  const pockets = parseInt(document.getElementById('pockets').value);
-  const today = new Date().toISOString().split('T')[0];
+  let pockets = parseInt(document.getElementById('pockets').value);
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0];
 
-  console.log(`Name: ${name}, Pockets: ${pockets}, Date: ${today}`);
+  console.log(`Name: ${name}, Pockets: ${pockets}, Date: ${dateStr}`);
 
   if (name && !isNaN(pockets)) {
+    // Check if today's date is September 28th or 29th, 2024
+    const specialDates = ["2024-09-28", "2024-09-29"];
+
+    if (specialDates.includes(dateStr)) {
+      // Add 5 to the pockets
+      pockets += 5;
+      alert("Weekend +5 bonus applied! Your new pockets count is " + pockets);
+    }
+
     try {
       await addDoc(collection(db, 'entries'), {
         name: name,
         pockets: pockets,
-        date: today
+        date: dateStr
       });
       console.log('Entry added to Firestore');
       alert('Entry submitted successfully!');
@@ -58,7 +68,7 @@ async function submitEntry(e) {
 
       // Now, check if the user's entry is the winning entry
       // Fetch today's entries
-      const q = query(collection(db, 'entries'), where('date', '==', today));
+      const q = query(collection(db, 'entries'), where('date', '==', dateStr));
       const querySnapshot = await getDocs(q);
       const entries = [];
       querySnapshot.forEach((doc) => {
