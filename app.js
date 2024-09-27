@@ -7,7 +7,10 @@ import {
   query,
   where,
   getDocs,
-  setLogLevel
+  setLogLevel,
+  orderBy,
+  getDoc,
+  doc
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
 // Your Firebase configuration
@@ -51,7 +54,7 @@ async function submitEntry(e) {
       console.log('Entry added to Firestore');
       alert('Entry submitted successfully!');
       document.getElementById('entryForm').reset();
-      loadLeaderboard(); // Reload leaderboards after submission
+      await loadLeaderboard(); // Reload leaderboards after submission
 
       // Now, check if the user's entry is the winning entry
       // Fetch today's entries
@@ -97,6 +100,7 @@ async function loadLeaderboard() {
   console.log('loadLeaderboard called');
   await loadLeaderboardForDate('todayLeaderboard', new Date());
   await loadLeaderboardForDate('yesterdayLeaderboard', new Date(Date.now() - 86400000)); // 1 day in milliseconds
+  await loadDailyWinners(); // Load the daily winners table
 }
 
 async function loadLeaderboardForDate(tableId, dateObj) {
@@ -168,4 +172,66 @@ function displayLeaderboard(entries, tableId) {
       nameCell.classList.add('winner'); // Add class to display star
     }
   });
+}
+
+// New function to load daily winners
+async function loadDailyWinners() {
+  console.log('Loading daily winners');
+
+  const winnersTable = document.getElementById('winnersTable').getElementsByTagName('tbody')[0];
+  winnersTable.innerHTML = ''; // Clear existing data
+
+  try {
+    // Fetch all entries
+    const q = query(collection(db, 'entries'));
+    const querySnapshot = await getDocs(q);
+
+    const entriesByDate = {};
+
+    // Organize entries by date
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const date = data.date;
+      if (!entriesByDate[date]) {
+        entriesByDate[date] = [];
+      }
+      data.pockets = Number(data.pockets); // Ensure pockets is a number
+      entriesByDate[date].push(data);
+    });
+
+    // Get all dates and sort them in descending order
+    const dates = Object.keys(entriesByDate).sort((a, b) => new Date(b) - new Date(a));
+
+    // Determine winner for each date
+    dates.forEach((date) => {
+      const entries = entriesByDate[date];
+
+      // Calculate the smallest unique number of pockets over 0
+      const pocketCounts = entries
+        .filter(entry => entry.pockets > 0)
+        .map(entry => entry.pockets);
+      const uniquePockets = pocketCounts.filter((pockets, _, arr) => arr.indexOf(pockets) === arr.lastIndexOf(pockets));
+      const minUniquePockets = uniquePockets.length > 0 ? Math.min(...uniquePockets) : null;
+
+      // Find the winner(s)
+      const winners = entries.filter(entry => entry.pockets === minUniquePockets && entry.pockets > 0);
+
+      const row = winnersTable.insertRow();
+      const dateCell = row.insertCell(0);
+      const winnerCell = row.insertCell(1);
+
+      dateCell.innerText = date;
+
+      if (winners.length > 0) {
+        // If multiple winners (tie), list all names
+        const winnerNames = winners.map(winner => '⭐ ' + winner.name).join(', ');
+        winnerCell.innerText = winnerNames;
+      } else {
+        winnerCell.innerText = 'No winner';
+      }
+    });
+
+  } catch (error) {
+    console.error('Error loading daily winners: ', error);
+  }
 }
