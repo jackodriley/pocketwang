@@ -11,7 +11,7 @@
     /* Basic styling */
     body {
       font-family: 'VT323', monospace;
-      background-color: black;
+      background-color: white; /* Changed from black to white */
       color: green;
       margin: 20px;
     }
@@ -38,7 +38,7 @@
 
     form { margin-bottom: 30px; text-align: center; }
     input, button {
-      background-color: black;
+      background-color: white; /* Changed from black to white */
       color: green;
       border: 1px solid green;
       font-family: 'VT323', monospace;
@@ -98,7 +98,7 @@
       display: block;
       margin: 10px auto;
       font-size: 5vw;
-      background-color: black;
+      background-color: white; /* Changed from black to white */
       color: green;
       border: 1px solid green;
       font-family: 'VT323', monospace;
@@ -132,6 +132,35 @@
         font-size: 14px;
       }
     }
+    /* Style for RIP MAGGIE text */
+    .rip-text {
+      text-align: center;
+      color: black;
+      margin-top: 20px;
+      font-size: 6vw;
+    }
+    .rip-subtext {
+      text-align: center;
+      color: black;
+      font-size: 4vw;
+    }
+    @media (min-width: 600px) {
+      .rip-text {
+        font-size: 24px;
+      }
+      .rip-subtext {
+        font-size: 16px;
+      }
+    }
+    /* Style for the embedded GIF */
+    .gif-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .gif-container img {
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -150,6 +179,15 @@
     <br />
     <button type="submit">Submit</button>
   </form>
+
+  <!-- Added RIP MAGGIE and dates -->
+  <h2 class="rip-text">RIP MAGGIE</h2>
+  <p class="rip-subtext">28.12.34 - 27.9.24</p>
+
+  <!-- Embedded GIF -->
+  <div class="gif-container">
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTFhbWw0M3dhcXNvYmw0bHphZ3JrazF0ZHphbG0zaGNzanAyM2ZwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q9ASS7CxJPbEqRW74e/giphy.webp" alt="Maggie GIF">
+  </div>
 
   <!-- Div to display the congratulatory message -->
   <div id="message"></div>
