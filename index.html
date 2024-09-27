@@ -11,7 +11,7 @@
     /* Basic styling */
     body {
       font-family: 'VT323', monospace;
-      background-color: white; /* Changed from black to white */
+      background-color: white;
       color: green;
       margin: 20px;
     }
@@ -21,6 +21,7 @@
       margin-bottom: 20px;
     }
     h1.title span {
+      display: inline-block; /* Needed for animation */
       color: red; /* Default color */
     }
     /* Assign different colors to each letter */
@@ -36,9 +37,30 @@
     h1.title span:nth-child(10){ color: pink; }   /* C */
     h1.title span:nth-child(11){ color: gold; }   /* K */
 
+    /* Animation styling */
+    @keyframes wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    /* Apply animation to each letter with a delay */
+    h1.title span {
+      animation: wave 1s ease-in-out infinite;
+    }
+    h1.title span:nth-child(1) { animation-delay: 0s; }
+    h1.title span:nth-child(2) { animation-delay: 0.1s; }
+    h1.title span:nth-child(3) { animation-delay: 0.2s; }
+    h1.title span:nth-child(4) { animation-delay: 0.3s; }
+    h1.title span:nth-child(5) { animation-delay: 0.4s; }
+    h1.title span:nth-child(6) { animation-delay: 0.5s; }
+    h1.title span:nth-child(7) { animation-delay: 0.6s; }
+    h1.title span:nth-child(8) { animation-delay: 0.7s; }
+    h1.title span:nth-child(9) { animation-delay: 0.8s; }
+    h1.title span:nth-child(10){ animation-delay: 0.9s; }
+    h1.title span:nth-child(11){ animation-delay: 1s; }
+
     form { margin-bottom: 30px; text-align: center; }
     input, button {
-      background-color: white; /* Changed from black to white */
+      background-color: white;
       color: green;
       border: 1px solid green;
       font-family: 'VT323', monospace;
@@ -65,11 +87,12 @@
       text-align: left;
       font-size: 4vw; /* Responsive font size */
     }
-    tr.highlight { background-color: #004400; } /* Darker green for winner */
+    tr.highlight { background-color: #004400; }
     tr.highlight td {
-      color: white; /* Make text color white for better contrast */
+      color: white;
     }
-    .winner::before { content: '⭐ '; } /* Display star before winner's name */
+    .winner::before { content: '⭐ '; }
+
     /* Responsive adjustments */
     @media (min-width: 600px) {
       input, button {
@@ -98,7 +121,7 @@
       display: block;
       margin: 10px auto;
       font-size: 5vw;
-      background-color: white; /* Changed from black to white */
+      background-color: white;
       color: green;
       border: 1px solid green;
       font-family: 'VT323', monospace;
