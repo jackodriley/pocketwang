@@ -62,7 +62,7 @@ async function submitEntry(e) {
         date: dateStr
       });
       console.log('Entry added to Firestore');
-      alert('Entry submitted successfully!');
+      alert('Pockets entered! Thank you for playing POCKETWHACK! © POTATOCORP 2024');
       document.getElementById('entryForm').reset();
       await loadLeaderboard(); // Reload leaderboards after submission
 
