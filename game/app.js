@@ -17,9 +17,9 @@ const firebaseConfig = {
   authDomain: "pocketwang-a2d56.firebaseapp.com",
   projectId: "pocketwang-a2d56",
   storageBucket: "pocketwang-a2d56.appspot.com",
-  messagingSenderId: "321549602257",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "YOUR_APP_ID",
-  measurementId: "G-R6J2X0JHJW"
+  measurementId: "YOUR_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
@@ -31,18 +31,21 @@ let score = 0;
 let lives = 3;
 let gameInterval;
 let pocketTimeouts = [];
-let spawnInterval = 1000; // Initial spawn interval in ms
-let spawnDecreaseRate = 50; // Decrease interval by 50ms every level
-let minSpawnInterval = 300; // Minimum spawn interval
-let pocketDisplayTime = 1000; // Initial pocket display time in ms
-let displayDecreaseRate = 50; // Decrease display time by 50ms every level
-let minDisplayTime = 300; // Minimum display time
+let spawnInterval = 1300; // Slowed down by 30%
+let spawnDecreaseRate = 35; // Decrease interval by 35ms every level
+let minSpawnInterval = 390; // Minimum spawn interval
+let pocketDisplayTime = 1300; // Slowed down by 30%
+let displayDecreaseRate = 35; // Decrease display time by 35ms every level
+let minDisplayTime = 390; // Minimum display time
 let level = 1;
 
 // Initialize game on window load
 window.onload = function() {
   setupGrid();
-  startGame();
+  // Start the game when the start button is clicked
+  document.getElementById('start-button').addEventListener('click', startGame);
+  // Load high scores on page load
+  loadHighScores();
 };
 
 // Set up the game grid
@@ -58,11 +61,14 @@ function setupGrid() {
 
 // Start the game
 function startGame() {
+  // Hide the start button
+  document.getElementById('start-button').style.display = 'none';
+
   score = 0;
   lives = 3;
   level = 1;
-  spawnInterval = 1000;
-  pocketDisplayTime = 1000;
+  spawnInterval = 1300;
+  pocketDisplayTime = 1300;
   updateScoreboard();
 
   gameInterval = setInterval(spawnPocket, spawnInterval);
@@ -81,8 +87,17 @@ function spawnPocket() {
   pocket.classList.add('pocket');
   cell.appendChild(pocket);
 
-  // Add event listener to the pocket
-  pocket.addEventListener('click', () => {
+  // Replace the pocket div with an image
+  const pocketImage = document.createElement('img');
+  pocketImage.src = 'pocket.png'; // Replace with your image URL
+  pocketImage.style.width = '100%';
+  pocketImage.style.height = '100%';
+  pocketImage.style.objectFit = 'contain';
+  pocketImage.style.cursor = 'pointer';
+  pocket.appendChild(pocketImage);
+
+  // Add event listener to the pocket image
+  pocketImage.addEventListener('click', () => {
     score++;
     cell.removeChild(pocket);
     updateScoreboard();
@@ -149,21 +164,37 @@ function endGame() {
 async function checkHighScore(playerScore) {
   // Fetch existing high scores
   const scoresRef = collection(db, 'highscores');
-  const q = query(scoresRef, orderBy('score', 'desc'), limit(5));
+  const q = query(scoresRef, orderBy('score', 'desc'));
   const querySnapshot = await getDocs(q);
 
   let isHighScore = false;
   const highScores = [];
 
+  let maxRealScore = 0;
+
   querySnapshot.forEach(doc => {
-    highScores.push(doc.data());
-    if (playerScore > doc.data().score) {
-      isHighScore = true;
+    const data = doc.data();
+    if (data.name !== 'Jack') {
+      highScores.push(data);
+      if (data.score > maxRealScore) {
+        maxRealScore = data.score;
+      }
     }
   });
 
-  // If there are less than 5 scores, it's a high score
-  if (highScores.length < 5) {
+  // Add "Jack" at the top with score one higher than max real score
+  const jackScore = maxRealScore + 1;
+  const jackEntry = { name: 'Jack', score: jackScore };
+  highScores.unshift(jackEntry);
+
+  // Limit to top 5 scores
+  const topScores = highScores.slice(0, 5);
+
+  // Display high scores
+  displayHighScores(topScores);
+
+  // Determine if player's score is a high score
+  if (highScores.length < 6 || playerScore > highScores[highScores.length - 1].score) {
     isHighScore = true;
   }
 
@@ -174,9 +205,6 @@ async function checkHighScore(playerScore) {
   } else {
     document.getElementById('highscore-section').style.display = 'none';
   }
-
-  // Display high scores
-  displayHighScores(highScores);
 }
 
 // Submit high score to Firebase
@@ -203,15 +231,33 @@ async function submitHighScore(e) {
 // Load and display high scores
 async function loadHighScores() {
   const scoresRef = collection(db, 'highscores');
-  const q = query(scoresRef, orderBy('score', 'desc'), limit(5));
+  const q = query(scoresRef, orderBy('score', 'desc'));
   const querySnapshot = await getDocs(q);
 
   const highScores = [];
+
+  let maxRealScore = 0;
+
   querySnapshot.forEach(doc => {
-    highScores.push(doc.data());
+    const data = doc.data();
+    if (data.name !== 'Jack') {
+      highScores.push(data);
+      if (data.score > maxRealScore) {
+        maxRealScore = data.score;
+      }
+    }
   });
 
-  displayHighScores(highScores);
+  // Add "Jack" at the top with score one higher than max real score
+  const jackScore = maxRealScore + 1;
+  const jackEntry = { name: 'Jack', score: jackScore };
+  highScores.unshift(jackEntry);
+
+  // Limit to top 5 scores
+  const topScores = highScores.slice(0, 5);
+
+  // Display high scores
+  displayHighScores(topScores);
 }
 
 // Display high scores in the table
@@ -236,8 +282,8 @@ function restartGame() {
   score = 0;
   lives = 3;
   level = 1;
-  spawnInterval = 1000;
-  pocketDisplayTime = 1000;
+  spawnInterval = 1300;
+  pocketDisplayTime = 1300;
   pocketTimeouts = [];
   document.getElementById('game-over-modal').style.display = 'none';
   updateScoreboard();
@@ -245,6 +291,6 @@ function restartGame() {
   const pockets = document.querySelectorAll('.pocket');
   pockets.forEach(pocket => pocket.parentNode.removeChild(pocket));
 
-  // Start the game
-  gameInterval = setInterval(spawnPocket, spawnInterval);
+  // Show the start button again
+  document.getElementById('start-button').style.display = 'block';
 }
