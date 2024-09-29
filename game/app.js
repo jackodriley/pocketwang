@@ -34,10 +34,10 @@ let gameInterval;
 let pocketTimeouts = [];
 let spawnInterval = 1300; // Slowed down by 30%
 let spawnDecreaseRate = 35; // Decrease interval by 35ms every level
-let minSpawnInterval = 390; // Minimum spawn interval
+let minSpawnInterval = 600; // Minimum spawn interval
 let pocketDisplayTime = 1300; // Slowed down by 30%
 let displayDecreaseRate = 35; // Decrease display time by 35ms every level
-let minDisplayTime = 390; // Minimum display time
+let minDisplayTime = 600; // Minimum display time
 let level = 1;
 let gameStarted = false;
 
