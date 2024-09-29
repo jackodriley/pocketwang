@@ -4,9 +4,12 @@ import {
   getFirestore,
   collection,
   addDoc,
+  setDoc,
+  doc,
+  updateDoc,
   query,
+  where,
   orderBy,
-  limit,
   getDocs,
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
@@ -20,6 +23,7 @@ const firebaseConfig = {
   appId: "1:321549602257:web:36c42c88de80a58eb4a4f0",
   measurementId: "G-R6J2X0JHJW"
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -78,7 +82,7 @@ function startGame() {
   gameInterval = setInterval(spawnPocket, spawnInterval);
 }
 
-// Spawn a pocket at a random cell
+// Spawn a pocket or potato at a random cell
 function spawnPocket() {
   if (!gameStarted) return;
 
@@ -86,37 +90,75 @@ function spawnPocket() {
   const randomIndex = Math.floor(Math.random() * cells.length);
   const cell = cells[randomIndex];
 
-  // If there's already a pocket in this cell, do nothing
-  if (cell.querySelector('.pocket')) return;
+  // If there's already a pocket or potato in this cell, do nothing
+  if (cell.querySelector('.pocket') || cell.querySelector('.potato')) return;
 
-  const pocket = document.createElement('div');
-  pocket.classList.add('pocket');
-  cell.appendChild(pocket);
+  // Decide whether to spawn a pocket or a potato
+  const spawnPotato = Math.random() < 0.2; // 20% chance to spawn a potato
 
-  // Replace the pocket div with an image
-  const pocketImage = document.createElement('img');
-  pocketImage.src = 'pocket.png'; // Replace with your image URL
-  pocketImage.style.width = '100%';
-  pocketImage.style.height = '100%';
-  pocketImage.style.objectFit = 'contain';
-  pocketImage.style.cursor = 'pointer';
-  pocket.appendChild(pocketImage);
+  if (spawnPotato) {
+    // Spawn a potato
+    const potato = document.createElement('div');
+    potato.classList.add('potato');
+    cell.appendChild(potato);
 
-  // Add event listener to the pocket image
-  pocketImage.addEventListener('click', () => {
-    score++;
-    cell.removeChild(pocket);
-    updateScoreboard();
-  });
+    const potatoImage = document.createElement('img');
+    potatoImage.src = 'potato.png'; // Replace with your image URL
+    potatoImage.style.width = '100%';
+    potatoImage.style.height = '100%';
+    potatoImage.style.objectFit = 'contain';
+    potatoImage.style.cursor = 'pointer';
+    potato.appendChild(potatoImage);
 
-  // Remove the pocket after display time
-  const timeout = setTimeout(() => {
-    if (cell.contains(pocket)) {
+    // Add event listener to the potato image
+    potatoImage.addEventListener('click', () => {
+      // User loses a life
+      cell.removeChild(potato);
+      loseLife();
+
+      // Play potato sound
+      const potatoSound = new Audio('potato_sound.mp3'); // Replace with your sound file
+      potatoSound.play();
+    });
+
+    // Remove the potato after display time
+    const timeout = setTimeout(() => {
+      if (cell.contains(potato)) {
+        cell.removeChild(potato);
+      }
+    }, pocketDisplayTime);
+    pocketTimeouts.push(timeout);
+
+  } else {
+    // Spawn a pocket
+    const pocket = document.createElement('div');
+    pocket.classList.add('pocket');
+    cell.appendChild(pocket);
+
+    const pocketImage = document.createElement('img');
+    pocketImage.src = 'pocket.png'; // Replace with your image URL
+    pocketImage.style.width = '100%';
+    pocketImage.style.height = '100%';
+    pocketImage.style.objectFit = 'contain';
+    pocketImage.style.cursor = 'pointer';
+    pocket.appendChild(pocketImage);
+
+    // Add event listener to the pocket image
+    pocketImage.addEventListener('click', () => {
+      score++;
       cell.removeChild(pocket);
-      missPocket();
-    }
-  }, pocketDisplayTime);
-  pocketTimeouts.push(timeout);
+      updateScoreboard();
+    });
+
+    // Remove the pocket after display time
+    const timeout = setTimeout(() => {
+      if (cell.contains(pocket)) {
+        cell.removeChild(pocket);
+        missPocket();
+      }
+    }, pocketDisplayTime);
+    pocketTimeouts.push(timeout);
+  }
 
   // Increase difficulty over time
   increaseDifficulty();
@@ -139,6 +181,15 @@ function increaseDifficulty() {
 
 // Handle missing a pocket
 function missPocket() {
+  lives--;
+  updateScoreboard();
+  if (lives <= 0) {
+    endGame();
+  }
+}
+
+// Handle losing a life (e.g., clicking a potato)
+function loseLife() {
   lives--;
   updateScoreboard();
   if (lives <= 0) {
@@ -175,39 +226,39 @@ async function checkHighScore(playerScore) {
   const q = query(scoresRef, orderBy('score', 'desc'));
   const querySnapshot = await getDocs(q);
 
-  let isHighScore = false;
-  const highScores = [];
-
+  const highScoresMap = {};
   let maxRealScore = 0;
 
   querySnapshot.forEach(doc => {
     const data = doc.data();
     if (data.name !== 'Jack') {
-      highScores.push(data);
+      // Keep the highest score for each name
+      if (!highScoresMap[data.name] || data.score > highScoresMap[data.name].score) {
+        highScoresMap[data.name] = data;
+      }
       if (data.score > maxRealScore) {
         maxRealScore = data.score;
       }
     }
   });
 
+  // Convert highScoresMap to an array
+  let highScores = Object.values(highScoresMap);
+
   // Add "Jack" at the top with score one higher than max real score
   const jackScore = maxRealScore + 1;
   const jackEntry = { name: 'Jack', score: jackScore };
-  highScores.unshift(jackEntry);
+  highScores.push(jackEntry);
 
-  // Limit to top 5 scores
-  const topScores = highScores.slice(0, 5);
+  // Sort highScores by score descending
+  highScores.sort((a, b) => b.score - a.score);
 
   // Display high scores
-  displayHighScores(topScores);
+  displayHighScores(highScores);
 
   // Determine if player's score is a high score
-  if (topScores.length < 5 || playerScore > topScores[topScores.length - 1].score) {
-    isHighScore = true;
-  }
-
-  // If it's a high score, allow the player to enter their name
-  if (isHighScore) {
+  const lowestScore = highScores[highScores.length - 1].score;
+  if (playerScore > lowestScore || highScores.length < 1) {
     document.getElementById('highscore-section').style.display = 'block';
     document.getElementById('highscore-form').addEventListener('submit', submitHighScore);
   } else {
@@ -221,17 +272,37 @@ async function submitHighScore(e) {
   const playerName = document.getElementById('player-name').value.trim();
   if (playerName) {
     try {
-      await addDoc(collection(db, 'highscores'), {
-        name: playerName,
-        score: score
-      });
-      alert('High score submitted!');
+      // Check if a high score already exists for this player
+      const scoresRef = collection(db, 'highscores');
+      const q = query(scoresRef, where('name', '==', playerName));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // There is an existing score for this player
+        const docRef = querySnapshot.docs[0].ref;
+        const existingData = querySnapshot.docs[0].data();
+
+        if (score > existingData.score) {
+          // Update the score
+          await updateDoc(docRef, { score: score });
+          alert('High score updated!');
+        } else {
+          alert('You did not beat your previous high score.');
+        }
+      } else {
+        // No existing score, add new
+        await addDoc(scoresRef, {
+          name: playerName,
+          score: score
+        });
+        alert('High score submitted!');
+      }
       document.getElementById('highscore-form').reset();
       document.getElementById('highscore-section').style.display = 'none';
       // Refresh high scores
       loadHighScores();
     } catch (error) {
-      console.error('Error adding high score: ', error);
+      console.error('Error adding/updating high score: ', error);
     }
   }
 }
@@ -242,30 +313,35 @@ async function loadHighScores() {
   const q = query(scoresRef, orderBy('score', 'desc'));
   const querySnapshot = await getDocs(q);
 
-  const highScores = [];
-
+  const highScoresMap = {};
   let maxRealScore = 0;
 
   querySnapshot.forEach(doc => {
     const data = doc.data();
     if (data.name !== 'Jack') {
-      highScores.push(data);
+      // Keep the highest score for each name
+      if (!highScoresMap[data.name] || data.score > highScoresMap[data.name].score) {
+        highScoresMap[data.name] = data;
+      }
       if (data.score > maxRealScore) {
         maxRealScore = data.score;
       }
     }
   });
 
+  // Convert highScoresMap to an array
+  let highScores = Object.values(highScoresMap);
+
   // Add "Jack" at the top with score one higher than max real score
   const jackScore = maxRealScore + 1;
   const jackEntry = { name: 'Jack', score: jackScore };
-  highScores.unshift(jackEntry);
+  highScores.push(jackEntry);
 
-  // Limit to top 5 scores
-  const topScores = highScores.slice(0, 5);
+  // Sort highScores by score descending
+  highScores.sort((a, b) => b.score - a.score);
 
   // Display high scores
-  displayHighScores(topScores);
+  displayHighScores(highScores);
 }
 
 // Display high scores in the table
@@ -289,9 +365,19 @@ function restartGame() {
   // Hide game over modal
   document.getElementById('game-over-modal').style.display = 'none';
 
-  // Clear any remaining pockets
-  const pockets = document.querySelectorAll('.pocket');
-  pockets.forEach(pocket => pocket.parentNode.removeChild(pocket));
+  // Reset variables
+  score = 0;
+  lives = 3;
+  level = 1;
+  spawnInterval = 1300;
+  pocketDisplayTime = 1300;
+  pocketTimeouts = [];
+  gameStarted = false;
+  updateScoreboard();
+
+  // Clear any remaining pockets or potatoes
+  const items = document.querySelectorAll('.pocket, .potato');
+  items.forEach(item => item.parentNode.removeChild(item));
 
   // Show the start button again
   document.getElementById('start-button').style.display = 'block';
