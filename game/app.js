@@ -32,12 +32,12 @@ let score = 0;
 let lives = 3;
 let gameInterval;
 let pocketTimeouts = [];
-let spawnInterval = 1300; // Slowed down by 30%
-let spawnDecreaseRate = 35; // Decrease interval by 35ms every level
+let spawnInterval = 1600; // Slowed down by 30%
+let spawnDecreaseRate = 25; // Decrease interval by 35ms every level
 let minSpawnInterval = 600; // Minimum spawn interval
-let pocketDisplayTime = 1300; // Slowed down by 30%
-let displayDecreaseRate = 35; // Decrease display time by 35ms every level
-let minDisplayTime = 600; // Minimum display time
+let pocketDisplayTime = 1600; // Slowed down by 30%
+let displayDecreaseRate = 25; // Decrease display time by 35ms every level
+let minDisplayTime = 650; // Minimum display time
 let level = 1;
 let gameStarted = false;
 
@@ -81,8 +81,8 @@ function startGame() {
   score = 0;
   lives = 3;
   level = 1;
-  spawnInterval = 1300;
-  pocketDisplayTime = 1300;
+  spawnInterval = 1600;
+  pocketDisplayTime = 1600;
   pocketTimeouts = [];
   updateScoreboard();
 
@@ -254,7 +254,7 @@ async function checkHighScore(playerScore) {
 
   querySnapshot.forEach(doc => {
     const data = doc.data();
-    if (data.name !== 'Jack') {
+    if (data.name !== 'Jack 🎂') {
       // Keep the highest score for each name
       if (!highScoresMap[data.name] || data.score > highScoresMap[data.name].score) {
         highScoresMap[data.name] = data;
@@ -270,7 +270,7 @@ async function checkHighScore(playerScore) {
 
   // Add "Jack" at the top with score one higher than max real score
   const jackScore = maxRealScore + 1;
-  const jackEntry = { name: 'Jack', score: jackScore };
+  const jackEntry = { name: 'Jack 🎂', score: jackScore };
   highScores.push(jackEntry);
 
   // Sort highScores by score descending
