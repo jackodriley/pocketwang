@@ -6,7 +6,7 @@
   <!-- Responsive Meta Tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Include Google Font VT323 -->
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
   <style>
     /* Basic styling */
     body {
@@ -56,6 +56,13 @@
     h1.title span:nth-child(9) { animation-delay: 0.8s; }
     h1.title span:nth-child(10){ animation-delay: 0.9s; }
     h1.title span:nth-child(11){ animation-delay: 1s; }
+
+    /* Rules text */
+    #rules {
+      text-align: center;
+      font-size: 5vw;
+      margin-bottom: 20px;
+    }
 
     /* Grid styling */
     #game-grid {
@@ -118,6 +125,11 @@
     }
     #game-over-modal h2 {
       font-size: 8vw;
+      min-font-size: 14px;
+    }
+    #game-over-modal p, #game-over-modal h3 {
+      font-size: 5vw;
+      min-font-size: 14px;
     }
     #highscore-form {
       margin-top: 20px;
@@ -155,6 +167,7 @@
       border: 1px solid green;
       padding: 8px;
       font-size: 4vw;
+      min-font-size: 14px;
     }
     /* Start button container */
     #start-button-container {
@@ -169,6 +182,11 @@
   <h1 class="title">
     <span>W</span><span>H</span><span>A</span><span>C</span><span>K</span><span>E</span><span>T</span><span>P</span><span>O</span><span>C</span><span>K</span>
   </h1>
+
+  <!-- Rules Text -->
+  <div id="rules">
+    Whack Pockets 👖 - Dodge Potatoes 🥔 - Missing a pocket or whacking a potato costs you a life ☠️
+  </div>
 
   <!-- Start Game Button -->
   <div id="start-button-container">
@@ -212,6 +230,20 @@
         <button type="submit">Submit Score</button>
       </form>
     </div>
+    <!-- Load High Score Table on Game Over Screen -->
+    <h3>High Scores</h3>
+    <table id="game-over-highscore-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- High scores will be loaded here -->
+      </tbody>
+    </table>
     <button onclick="restartGame()">Play Again</button>
   </div>
 

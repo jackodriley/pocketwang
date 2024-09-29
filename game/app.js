@@ -79,18 +79,18 @@ function startGame() {
 
   gameStarted = true;
 
-  gameInterval = setInterval(spawnPocket, spawnInterval);
+  gameInterval = setInterval(spawnItem, spawnInterval);
 }
 
 // Spawn a pocket or potato at a random cell
-function spawnPocket() {
+function spawnItem() {
   if (!gameStarted) return;
 
   const cells = document.querySelectorAll('.grid-cell');
   const randomIndex = Math.floor(Math.random() * cells.length);
   const cell = cells[randomIndex];
 
-  // If there's already a pocket or potato in this cell, do nothing
+  // If there's already an item in this cell, do nothing
   if (cell.querySelector('.pocket') || cell.querySelector('.potato')) return;
 
   // Decide whether to spawn a pocket or a potato
@@ -171,7 +171,7 @@ function increaseDifficulty() {
   if (spawnInterval > minSpawnInterval) {
     clearInterval(gameInterval);
     spawnInterval -= spawnDecreaseRate;
-    gameInterval = setInterval(spawnPocket, spawnInterval);
+    gameInterval = setInterval(spawnItem, spawnInterval);
   }
   // Decrease pocket display time
   if (pocketDisplayTime > minDisplayTime) {
@@ -253,8 +253,8 @@ async function checkHighScore(playerScore) {
   // Sort highScores by score descending
   highScores.sort((a, b) => b.score - a.score);
 
-  // Display high scores
-  displayHighScores(highScores);
+  // Display high scores on the game over screen
+  displayHighScores(highScores, 'game-over-highscore-table');
 
   // Determine if player's score is a high score
   const lowestScore = highScores[highScores.length - 1].score;
@@ -340,13 +340,13 @@ async function loadHighScores() {
   // Sort highScores by score descending
   highScores.sort((a, b) => b.score - a.score);
 
-  // Display high scores
-  displayHighScores(highScores);
+  // Display high scores on the main screen
+  displayHighScores(highScores, 'highscore-table');
 }
 
 // Display high scores in the table
-function displayHighScores(highScores) {
-  const tbody = document.querySelector('#highscore-table tbody');
+function displayHighScores(highScores, tableId) {
+  const tbody = document.querySelector(`#${tableId} tbody`);
   tbody.innerHTML = '';
   highScores.forEach((scoreData, index) => {
     const row = tbody.insertRow();
