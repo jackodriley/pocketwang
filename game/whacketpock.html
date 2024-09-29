@@ -89,6 +89,20 @@
       margin: 0 20px;
       font-size: 5vw;
     }
+    /* Buttons */
+    button {
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      font-size: 5vw;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: green;
+      color: black;
+    }
     /* Game over modal */
     #game-over-modal {
       display: none;
@@ -118,6 +132,19 @@
       padding: 5px;
       margin: 5px;
     }
+    #highscore-form button {
+      background-color: black;
+      color: green;
+      border: 1px solid green;
+      font-family: 'VT323', monospace;
+      font-size: 5vw;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    #highscore-form button:hover {
+      background-color: green;
+      color: black;
+    }
     #highscore-table {
       margin-top: 20px;
       width: 80%;
@@ -130,6 +157,11 @@
       padding: 8px;
       font-size: 4vw;
     }
+    /* Start button container */
+    #start-button-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -140,7 +172,7 @@
   </h1>
 
   <!-- Start Game Button -->
-  <div style="text-align: center; margin-bottom: 20px;">
+  <div id="start-button-container">
     <button id="start-button">Start Game</button>
   </div>
 

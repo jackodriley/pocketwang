@@ -12,14 +12,13 @@ import {
 
 // Your Firebase configuration
 const firebaseConfig = {
-  // Your Firebase configuration details
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDQ5SEDfrvmAaGBjZTtHQ2L89jprhJ5QHk",
   authDomain: "pocketwang-a2d56.firebaseapp.com",
   projectId: "pocketwang-a2d56",
   storageBucket: "pocketwang-a2d56.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  messagingSenderId: "321549602257",
+  appId: "1:321549602257:web:36c42c88de80a58eb4a4f0",
+  measurementId: "G-R6J2X0JHJW"
 };
 
 // Initialize Firebase
@@ -38,6 +37,7 @@ let pocketDisplayTime = 1300; // Slowed down by 30%
 let displayDecreaseRate = 35; // Decrease display time by 35ms every level
 let minDisplayTime = 390; // Minimum display time
 let level = 1;
+let gameStarted = false;
 
 // Initialize game on window load
 window.onload = function() {
@@ -64,18 +64,24 @@ function startGame() {
   // Hide the start button
   document.getElementById('start-button').style.display = 'none';
 
+  // Reset variables
   score = 0;
   lives = 3;
   level = 1;
   spawnInterval = 1300;
   pocketDisplayTime = 1300;
+  pocketTimeouts = [];
   updateScoreboard();
+
+  gameStarted = true;
 
   gameInterval = setInterval(spawnPocket, spawnInterval);
 }
 
 // Spawn a pocket at a random cell
 function spawnPocket() {
+  if (!gameStarted) return;
+
   const cells = document.querySelectorAll('.grid-cell');
   const randomIndex = Math.floor(Math.random() * cells.length);
   const cell = cells[randomIndex];
@@ -148,6 +154,8 @@ function updateScoreboard() {
 
 // End the game
 function endGame() {
+  gameStarted = false;
+
   // Stop the game intervals and timeouts
   clearInterval(gameInterval);
   pocketTimeouts.forEach(timeout => clearTimeout(timeout));
@@ -194,7 +202,7 @@ async function checkHighScore(playerScore) {
   displayHighScores(topScores);
 
   // Determine if player's score is a high score
-  if (highScores.length < 6 || playerScore > highScores[highScores.length - 1].score) {
+  if (topScores.length < 5 || playerScore > topScores[topScores.length - 1].score) {
     isHighScore = true;
   }
 
@@ -278,15 +286,9 @@ function displayHighScores(highScores) {
 
 // Restart the game
 function restartGame() {
-  // Reset variables
-  score = 0;
-  lives = 3;
-  level = 1;
-  spawnInterval = 1300;
-  pocketDisplayTime = 1300;
-  pocketTimeouts = [];
+  // Hide game over modal
   document.getElementById('game-over-modal').style.display = 'none';
-  updateScoreboard();
+
   // Clear any remaining pockets
   const pockets = document.querySelectorAll('.pocket');
   pockets.forEach(pocket => pocket.parentNode.removeChild(pocket));
