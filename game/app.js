@@ -4,8 +4,6 @@ import {
   getFirestore,
   collection,
   addDoc,
-  setDoc,
-  doc,
   updateDoc,
   query,
   where,
@@ -48,6 +46,11 @@ window.onload = function() {
   setupGrid();
   // Start the game when the start button is clicked
   document.getElementById('start-button').addEventListener('click', startGame);
+  // Add event listener for the "Play Again" button
+  document.getElementById('play-again-button').addEventListener('click', () => {
+    // Reload the page
+    window.location.reload();
+  });
   // Load high scores on page load
   loadHighScores();
 };
@@ -67,6 +70,12 @@ function setupGrid() {
 function startGame() {
   // Hide the start button
   document.getElementById('start-button').style.display = 'none';
+
+  // Play background music
+  const backgroundMusic = document.getElementById('background-music');
+  backgroundMusic.play().catch(error => {
+    console.error('Background music playback failed:', error);
+  });
 
   // Reset variables
   score = 0;
@@ -118,7 +127,9 @@ function spawnItem() {
 
       // Play potato sound
       const potatoSound = new Audio('potato_sound.mp3'); // Replace with your sound file
-      potatoSound.play();
+      potatoSound.play().catch(error => {
+        console.error('Potato sound playback failed:', error);
+      });
     });
 
     // Remove the potato after display time
@@ -148,6 +159,13 @@ function spawnItem() {
       score++;
       cell.removeChild(pocket);
       updateScoreboard();
+
+      // Play pocket click sound
+      const pocketClickSound = document.getElementById('pocket-click-sound');
+      pocketClickSound.currentTime = 0; // Reset to start
+      pocketClickSound.play().catch(error => {
+        console.error('Pocket click sound playback failed:', error);
+      });
     });
 
     // Remove the pocket after display time
@@ -211,6 +229,11 @@ function endGame() {
   clearInterval(gameInterval);
   pocketTimeouts.forEach(timeout => clearTimeout(timeout));
 
+  // Stop background music
+  const backgroundMusic = document.getElementById('background-music');
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+
   // Show game over modal
   document.getElementById('final-score').innerText = score;
   document.getElementById('game-over-modal').style.display = 'block';
@@ -253,12 +276,15 @@ async function checkHighScore(playerScore) {
   // Sort highScores by score descending
   highScores.sort((a, b) => b.score - a.score);
 
-  // Display high scores on the game over screen
-  displayHighScores(highScores, 'game-over-highscore-table');
+  // Limit to top 20 scores
+  highScores = highScores.slice(0, 20);
+
+  // Display high scores on the main screen (optional if you want to display here)
+  // displayHighScores(highScores, 'highscore-table');
 
   // Determine if player's score is a high score
   const lowestScore = highScores[highScores.length - 1].score;
-  if (playerScore > lowestScore || highScores.length < 1) {
+  if (playerScore > lowestScore || highScores.length < 20) {
     document.getElementById('highscore-section').style.display = 'block';
     document.getElementById('highscore-form').addEventListener('submit', submitHighScore);
   } else {
@@ -340,6 +366,9 @@ async function loadHighScores() {
   // Sort highScores by score descending
   highScores.sort((a, b) => b.score - a.score);
 
+  // Limit to top 20 scores
+  highScores = highScores.slice(0, 20);
+
   // Display high scores on the main screen
   displayHighScores(highScores, 'highscore-table');
 }
@@ -358,27 +387,4 @@ function displayHighScores(highScores, tableId) {
     nameCell.innerText = scoreData.name;
     scoreCell.innerText = scoreData.score;
   });
-}
-
-// Restart the game
-function restartGame() {
-  // Hide game over modal
-  document.getElementById('game-over-modal').style.display = 'none';
-
-  // Reset variables
-  score = 0;
-  lives = 3;
-  level = 1;
-  spawnInterval = 1300;
-  pocketDisplayTime = 1300;
-  pocketTimeouts = [];
-  gameStarted = false;
-  updateScoreboard();
-
-  // Clear any remaining pockets or potatoes
-  const items = document.querySelectorAll('.pocket, .potato');
-  items.forEach(item => item.parentNode.removeChild(item));
-
-  // Show the start button again
-  document.getElementById('start-button').style.display = 'block';
 }

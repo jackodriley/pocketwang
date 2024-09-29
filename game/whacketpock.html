@@ -230,22 +230,20 @@
         <button type="submit">Submit Score</button>
       </form>
     </div>
-    <!-- Load High Score Table on Game Over Screen -->
-    <h3>High Scores</h3>
-    <table id="game-over-highscore-table">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Name</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- High scores will be loaded here -->
-      </tbody>
-    </table>
-    <button onclick="restartGame()">Play Again</button>
+    <button id="play-again-button">Play Again</button>
   </div>
+
+  <!-- Background Music -->
+  <audio id="background-music" loop>
+    <source src="https://jackodriley.github.io/pocketwang/pocketwhack.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Pocket Click Sound Effect -->
+  <audio id="pocket-click-sound">
+    <source src="pocket_click.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
   <!-- Include your JavaScript code as a module -->
   <script type="module" src="app.js"></script>
